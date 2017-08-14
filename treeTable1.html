@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #propertyBox{
+            background-color: #a6ff43;
+            border:1px solid #000;
+            margin-bottom: 2px;
+        }
+        #setBox{
+            background-color: #edd1ff;
+            border:1px solid #000;
+            margin-bottom: 2px;
+        }
+        .propertyCss{
+            background-color: #ff95c8;
+            border:1px solid #000;
+            margin-bottom: 2px;
+        }
+
+    </style>
+    <script src="jquery-2.1.1.min.js"></script>
+    <script>
+
+        $(function(){
+
+            $setTable = $("#setTable");
+            $thead = $setTable.find("thead");
+            $tbody = $setTable.find("tbody");
+
+            $("[name='addProperty']").click(addProperty);
+
+            $("[name='delProperty']").click(delProperty);
+
+            $("[name='addPropertyValue']").click(addPropertyValue);
+
+            $("[name='delPropertyValue']").click(delPropertyValue);
+
+
+            propertyTemplate = $("#propertyTemplate").html();
+            propertyValueTemplate = $("#propertyValueTemplate tbody").html();
+            trTemplateStr = $("#trTemplate tbody").html();
+            basicColSize = $("#trTemplate tbody>tr>td").size()
+        });
+
+        function addProperty(){
+
+            var $propertyTemplate = $(propertyTemplate);
+
+            $("[name='delProperty']", $propertyTemplate).click(delProperty);
+            $("[name='addPropertyValue']", $propertyTemplate).click(addPropertyValue);
+            $("[name='delPropertyValue']", $propertyTemplate).click(delPropertyValue);
+            $("[name='propertyName']", $propertyTemplate).change(changePropertyName);
+            $("[name='title']", $propertyTemplate).change(changePropertyValueTitle);
+
+
+            $("#propertyBox").append($propertyTemplate);
+
+            setTablePropertyByAdd();
+
+        }
+
+        function setTablePropertyByAdd($propertyTemplate){
+
+            var colSize = $($thead.find("tr").get(0)).children("th").size();
+            var startIndex = colSize - basicColSize + 1;
+            var $propertyTh = $("<th>未设置</th>").click(function(){
+                $("[name='propertyName']", $propertyTemplate).focus();
+            });
+            $thead.find("tr th:nth-child(" + startIndex + ")").before($propertyTh);
+            var $tr = $tbody.find("tr");
+            if($tr.size() > 0){
+                $tbody.find("tr td:nth-last-child(" + (colSize - startIndex + 1) + ")").before("<td></td>");
+            }else{
+                var $trTemplate = $(trTemplateStr).prepend("<td></td>");
+                $tbody.append($trTemplate);
+            }
+
+        }
+
+
+
+        function addPropertyValue(){
+            var $template = $(propertyValueTemplate);
+            var numArr = collectRowSpan();
+            $("[name='delPropertyValue']", $template).click(delPropertyValue);
+            $("[name='title']", $template).change(changePropertyValueTitle);
+            var $propertyDiv = $(this).closest("[name='propertyDiv']");
+            $propertyDiv.find("[name='propertyValueTable'] tbody").append($template);
+            var index = $propertyDiv.index();
+            setTablePropertyValueByAdd(index, numArr);
+            refreshTitle();
+        }
+
+
+        function setTablePropertyValueByAdd(index, oldNumArr){
+
+
+            var $allTr = $tbody.find("tr");
+
+            var allTrSize = $allTr.size();
+            var oldRowSpanNum = oldNumArr[index - 1];
+            oldRowSpanNum = oldRowSpanNum ? oldRowSpanNum : allTrSize;
+            var stepNum = allTrSize / oldRowSpanNum;
+
+            var trArr = new Array();
+
+            var newNumArr = collectRowSpan();
+            var newRowSpanNum = newNumArr[index];
+            //console.log("newRowSpanNum ===== [" +newRowSpanNum+ "]");
+            if(newRowSpanNum) {
+                for (var i = 0; i < newRowSpanNum; i++) {
+                    var $trTemplate = $(trTemplateStr).prepend("<td></td>");
+                    createTd($trTemplate, newNumArr, i, index, newNumArr.length - 1);
+                    trArr.push($trTemplate);
+                }
+            }else{
+                trArr.push($(trTemplateStr).prepend("<td></td>"));
+            }
+
+
+
+            for(var i = stepNum; i > 0; i--){
+                for(var j = trArr.length - 1; j >= 0; j--){
+                    var changeRowIndex = i * oldRowSpanNum - 1;
+                    //console.log("--------" + $($(trArr[j])).find("td").size());
+                    //console.log("$allTr.size=[" + $allTr.size() + "], trArr.length=[" + trArr.length + "], stepNum=[" + stepNum + "], i=[" + i + "], oldRowSpanNum=[ " +oldRowSpanNum+ " ], changeRowIndex=[" + changeRowIndex + "], j=[" + j + "]");
+                    $allTr.eq(changeRowIndex).after($(trArr[j]).clone());
+                }
+
+            }
+
+
+            setRowSpan();
+
+        }
+
+        function createTd($trTemplate, numArr, rowIndex, colIndex, lastIndex){
+
+            if(colIndex > lastIndex){
+                return $trTemplate;
+            }
+
+            var rowSpanNum = numArr[lastIndex];
+            if(rowIndex % rowSpanNum == 0){
+                $trTemplate.prepend("<td></td>");
+            }
+
+            return createTd($trTemplate, numArr, rowIndex, colIndex, lastIndex - 1);
+        }
+
+
+
+
+        function delProperty(){
+
+
+
+            var $allTr = $tbody.find("tr");
+            var allTrSize = $allTr.size();
+
+            var $propertyDiv = $(this).closest("[name='propertyDiv']");
+            var index = $propertyDiv.index();
+
+            var oldNumArr = collectRowSpan();
+            var prevTrRowSpanNum = oldNumArr[index - 1];
+            var prevTrRowSpanNum = prevTrRowSpanNum ? prevTrRowSpanNum : allTrSize;
+            var nowTrRowSpanNum = oldNumArr[index];
+            var nowTrRowSpanNum = nowTrRowSpanNum ? nowTrRowSpanNum : 1;
+
+            var stepNum = allTrSize/prevTrRowSpanNum;
+
+            for(var i = stepNum; i > 0; i--){
+                var prevStartIndex = prevTrRowSpanNum * (i - 1);
+                var prevEndIndex = prevTrRowSpanNum * i;
+                var finalStartIndex = prevStartIndex + nowTrRowSpanNum;
+                for(var j = prevEndIndex - 1; j >= finalStartIndex; j--){
+                    $allTr.eq(j).remove();
+                }
+            }
+
+            var colSize = $($thead.find("tr").get(0)).children("th").size();
+            $thead.find("tr th:nth-child(" + (index + 1) + ")").remove();
+            $tbody.find("tr td:nth-last-child(" + (colSize - index) + ")").remove();
+
+
+            $propertyDiv.remove();
+
+            setRowSpan();
+        }
+
+        function delPropertyValue(){
+
+
+
+            var $tr = $(this).closest("tr");
+            if($tr.siblings().size() == 0){
+                alert("必须保留一个属性值！");
+                return;
+            }
+            var trIndex = $tr.index();
+            var propertyIndex = $tr.closest("[name='propertyDiv']").index();
+            var trNum = $tr.siblings().size();
+
+
+            var $allTr = $tbody.find("tr");
+            var allTrSize = $allTr.size();
+
+            var oldNumArr = collectRowSpan();
+            var prevTrRowSpanNum = oldNumArr[propertyIndex - 1];
+            var prevTrRowSpanNum = prevTrRowSpanNum ? prevTrRowSpanNum : allTrSize;
+            var nowTrRowSpanNum = oldNumArr[propertyIndex];
+            var nowTrRowSpanNum = nowTrRowSpanNum ? nowTrRowSpanNum : 1;
+
+
+            var stepNum = allTrSize/prevTrRowSpanNum;
+
+            //console.log("stepNum=[" + stepNum + "], prevTrRowSpanNum=[" + prevTrRowSpanNum + "]");
+
+
+            for(var i = stepNum; i > 0; i--){
+
+                var prevStartIndex = prevTrRowSpanNum * (i - 1);
+                var smallStartIndex = nowTrRowSpanNum * trIndex;
+                var finalStartIndex = prevStartIndex + smallStartIndex;
+                //console.log("prevStartIndex=[" + prevStartIndex + "], smallStartIndex=[" + smallStartIndex + "], finalStartIndex=[" + finalStartIndex + "], i=[" + i + "], nowTrRowSpanNum=[ " +nowTrRowSpanNum+ " ]");
+
+                for(var j = nowTrRowSpanNum; j > 0; j--){
+
+                    //console.log("$allTr.size=[" + $allTr.size() + "], $allTr.html=[" + $allTr.eq(finalStartIndex + j - 1).html() + "]");
+                    var $delTr = $allTr.eq(finalStartIndex + j - 1);
+//                    if(trIndex == 0 && trNum != 0){
+//                        console.log($delTr.next().html());
+//                        $delTr.find("td:lt("+ (propertyIndex + 1) +")").prependTo($delTr.next());
+//                    }
+                    $delTr.remove();
+                }
+
+            }
+            $tr.remove();
+            setRowSpan();
+        }
+
+        function setRowSpan(){
+            var numArr = collectRowSpan();
+            executeRowSpan(numArr);
+        }
+
+        function collectRowSpan(){
+
+            var $propertyValueTables = $("#propertyBox [name='propertyValueTable']").slice(1);
+            $propertyValueTables = $($propertyValueTables.toArray().reverse());
+            var propertySize = $propertyValueTables.size();
+            var numArr = new Array();
+
+            $propertyValueTables.each(function(i){
+                var trSize = $(this).find("tbody>tr").size();
+                numArr[propertySize - i - 1] = trSize * (i == 0 ? 1 : numArr[propertySize - i]);
+            });
+            //console.log(numArr);
+            return numArr;
+        }
+
+        function executeRowSpan(numArr){
+            //if(numArr.length == 0){
+            numArr.push(1);
+            //}
+
+
+            var colSize = $($thead.find("tr").get(0)).children("th").size();
+
+            for(var i = 0; i < numArr.length; i++){
+                $tbody.find("tr td:nth-last-child(" + (colSize - i) + ")").attr("rowspan", numArr[i]);
+            }
+        }
+
+        function changePropertyName(){
+
+            $this = $(this);
+            var index = $this.closest("[name='propertyDiv']").index();
+            $($thead.find("tr").get(0)).children("th").eq(index).text($this.val());
+        }
+
+        function changePropertyValueTitle(){
+
+
+            $this = $(this);
+            var xIndex = $this.closest("[name='propertyDiv']").index();
+            var $tr = $this.closest("tr");
+            var yIndex = $tr.index();
+
+            var smallSize = $tr.siblings().size() + 1;
+
+            var colSize = $($thead.find("tr").get(0)).children("th").size();
+            var $tds = $tbody.find("tr td:nth-last-child(" + (colSize - xIndex) + ")");
+
+            //console.log("$tds.size====" + $tds.size());
+            var stepNum = $tds.size() / smallSize;
+            for(var i = 0; i < stepNum; i++){
+                $tds.eq(i * smallSize + yIndex).text($this.val());
+            }
+        }
+
+        function refreshTitle(){
+
+
+//            $tbody.children("tr").children("td").hover(
+//                function () {
+//                    $(this).parent().css("background-color", "red");
+//                },
+//                function () {
+//                    $(this).parent().css("background-color", "");
+//                }
+//            );
+
+            var colSize = $($thead.find("tr").get(0)).children("th").size();
+            //var $propertyBox = $("#propertyBox");
+            //var $propertyValueTable = $propertyBox.find("[name='propertyValueTable']");
+            $("#propertyBox").find("[name='propertyValueTable']").each(function(i){
+                var $tds = $tbody.find("tr td:nth-last-child(" + (colSize - i) + ")");
+                var $trs = $(this).find("tbody>tr");
+                var smallSize = $trs.size();
+                var stepNum = $tds.size() / smallSize;
+                for(var j = 0; j < smallSize; j++){
+                    var titleValue = $trs.eq(j).find("[name=title]").val();
+                    for(var k = 0; k < stepNum; k++){
+                        //console.log("i=["+i+"], j=["+j+"], k=["+k+"], titleValue=["+titleValue+"]");
+                        $tds.eq(k * smallSize + j).text(titleValue);
+                    }
+                }
+            });
+
+        }
+
+
+    </script>
+
+</head>
+<body>
+    <div id="propertyBox"></div>
+    <a name="addProperty" href="javaScript:void(0)">添加属性</a>
+    <div id="setBox">
+        <table id="setTable" border="1">
+            <thead>
+                <tr>
+                    <th>平台价(元)</th>
+                    <th>零售价(元)</th>
+                    <th>库存数量</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div id="propertyTemplate" style="display: none">
+        <div name="propertyDiv" class="propertyCss">
+            <input name="propertyName"/>
+            <a name="delProperty" href="javaScript:void(0)">删除</a>
+            <table name="propertyValueTable" border="1">
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input name="title"/></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            <a name="addPropertyValue" href="javaScript:void(0)">添加值</a>
+        </div>
+    </div>
+
+    <table id="propertyValueTemplate" style="display: none">
+        <tbody>
+            <tr>
+                <td><input name="title"/></td>
+                <td><a name="delPropertyValue" href="javaScript:void(0)">删除</a></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table id="trTemplate" style="display: none">
+        <tbody>
+            <tr>
+                <td>
+                    <input name="e1"/>
+                </td>
+                <td>
+                    <input name="e2"/>
+                </td>
+                <td>
+                    <input name="e3"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
