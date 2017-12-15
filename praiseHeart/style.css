@@ -1,0 +1,35 @@
+body {
+  background: #000;
+  margin-top:25%;
+  text-align:center;
+}
+.canvasWrapper{
+  text-align: left;
+  width: 100%;
+  overflow: hidden;
+  position: absolute;
+  height: 60px;
+}
+
+
+.canvasWrapper:before {
+  content: 'x';
+  color:white;
+  width:5px;
+  height:5px;
+  display:block;
+  position:absolute;
+  top:24px;
+  font-size:19px;
+  font-family: "Courier";
+  left:142px;
+  font-weight:bold;
+  opacity:0.2;
+  transform: rotate(0deg);
+  transform-origin: 6px 9px;
+  animation: fan 2s linear infinite;
+}
+
+@keyframes fan {
+  100% { transform: rotate(360deg);}
+}
