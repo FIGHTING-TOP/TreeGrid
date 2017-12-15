@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>该二维码支持中文和LOGO</title>
+		<script type="text/javascript" src="jquery-3.0.0.min.js"></script>
+		<script src="utf.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript" src="jquery.qrcode.js"></script>
+	</head>
+	<body>
+		<!--<div id="code"></div>-->
+		<center>
+       		<h2>该二维码支持中文和LOGO</h2>
+       		<div id="qrcodeCanvas"></div>
+    	</center>
+		<!--<script type="text/javascript">
+			$('#code').qrcode("http://www.helloweba.com")
+		</script>-->
+		<script type="text/javascript">
+		    $(document).ready(function() {
+		        $("#qrcodeCanvas").qrcode({
+		            render : "canvas",    //设置渲染方式，有table和canvas，使用canvas方式渲染性能相对来说比较好
+		            text : "http://www.jq22.com/jquery-info4094",    //扫描二维码后显示的内容,可以直接填一个网址，扫描二维码后自动跳向该链接
+		            width : "200",               //二维码的宽度
+		            height : "200",              //二维码的高度
+		            background : "#ffffff",       //二维码的后景色
+		            foreground : "#000000",        //二维码的前景色
+		            src: 'logo.png'             //二维码中间的图片
+		        });
+		    });
+		</script>
+	</body>
+</html>
