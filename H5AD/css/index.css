@@ -1,0 +1,258 @@
+html, body {
+    position: relative;
+    height: 100%;
+}
+body {
+    background: #eee;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    color:#000;
+    margin: 0;
+    padding: 0;
+}
+.swiper-container {
+    width: 100%;
+    height: 100%;
+}
+.swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+
+    /* Center slide text vertically */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+.page_common{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-size: 100% 100%;
+}
+.page_common .element{
+    position: absolute;
+}
+
+
+.page_1 {
+    background-image: url("../img/1/bg1.png");
+}
+.page_1 .face{
+    top: 31vw;
+    width: 40vw;
+    left: 2vw;
+}
+.page_1 .smog{
+    top: 22vw;
+    width: 60vw;
+    left: 39vw;
+}
+.page_1 .ready{
+    top: 52vw;
+    width: 98vw;
+    left: 2vw;
+}
+.page_1 .child{
+    top: 77vw;
+    width: 51vw;
+    left: 0vw;
+}
+.page_1 .text1{
+    top: 78vw;
+    width: 59vw;
+    left: 41vw;
+}
+
+
+.page_2 {
+    background-image: url("../img/2/bg2.png");
+}
+.page_2 .what{
+    top: 31vw;
+    width: 80vw;
+    left: 12vw;
+}
+.page_2 .text2{
+    top: 65vw;
+    width: 73vw;
+    left: 14vw;
+}
+
+
+.page_3 {
+    background-image: url("../img/3/bg3.png");
+}
+.page_3 .harm{
+    top: 7vw;
+    width: 86vw;
+    left: 7vw;
+}
+.page_3 .illness{
+    top: 65vw;
+    width: 92vw;
+    left: 4vw;
+}
+.page_3 .children{
+    top: 82vw;
+    width: 100vw;
+    left: 0vw;
+}
+.page_3 .rectangle{
+    top: 117vw;
+    width: 92vw;
+    left: 4vw;
+}
+.page_3 .text3{
+    top: 118vw;
+    width: 83vw;
+    left: 8vw;
+}
+
+
+.page_4 {
+    background-image: url("../img/4/bg4.png");
+}
+.page_4 .freshair{
+    top: 14vw;
+    width: 76vw;
+    left: 12vw;
+}
+.page_4 .cascade{
+    top: 71vw;
+    width: 57vw;
+    left: -2vw;
+    z-index: 5;
+}
+.page_4 .session{
+    top: 77vw;
+    width: 70vw;
+    left: 34vw;
+}
+.page_4 .text4{
+    top: 82vw;
+    width: 60vw;
+    left: 42vw;
+}
+
+
+.page_5 {
+    background-image: url("../img/5/bg5.png");
+}
+.page_5 .text7{
+    top: 14vw;
+    width: 76vw;
+    left: 7vw;
+}
+.page_5 .radius{
+    top: 40vw;
+    width: 92vw;
+    left: 4vw;
+}
+.page_5 .pic1{
+    top: 43vw;
+    width: 50vw;
+    left: 8vw;
+}
+.page_5 .pic2{
+    top: 43vw;
+    width: 41vw;
+    left: 51vw;
+}
+.page_5 .pic4{
+    top: 75vw;
+    width: 41vw;
+    left: 8vw;
+}
+.page_5 .pic3{
+    top: 75vw;
+    width: 50vw;
+    left: 42vw;
+}
+.page_5 .love{
+    top: 114vw;
+    width: 33vw;
+    left: 5vw;
+}
+.page_5 .text6{
+    top: 112vw;
+    width: 47vw;
+    left: 36vw;
+}
+.page_5 .read{
+    top: 124vw;
+    width: 25vw;
+    left: 5vw;
+}
+.page_5 .text5{
+    top: 128vw;
+    width: 73vw;
+    left: 25vw;
+}
+
+
+.u-audio {
+    position: absolute;
+    top: 2%;
+    right: 5%;
+    z-index: 200;
+    overflow: hidden;
+    width: 26px;
+    height: 26px;
+}
+
+.audio-icon {
+    display: block;
+    width: 26px;
+    height: 26px;
+    background-image: url("../img/m.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.audio-xuan {
+    -webkit-animation-name: x-loading-spinner-rotate;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+}
+
+@-webkit-keyframes x-loading-spinner-rotate {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+
+
+.swiper-container .swiper-pagination{
+    left: 0;
+    bottom: 0;
+    top: auto;
+    height:4px;
+    width: 100%;
+}
+.swiper-container .swiper-pagination .selfDefine{
+    background: #007aff;
+    height: 4px;
+    position: absolute;
+    /*transform: scaleX(0);*/
+    z-index: 10;
+    left: 0;
+    top: 0;
+}
