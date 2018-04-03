@@ -1,0 +1,61 @@
+<!Doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>html5 image to base64</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    </head>
+    <body>
+        <input type="file" id="img_upload"/>
+        <textarea id="base64_code"></textarea>
+        <p id="img_area"></p>
+        <p id="ppp"></p>
+        <script type="text/javascript">
+        window.onload = function(){ 
+        // 抓取上传图片，转换代码结果，显示图片的dom
+        var img_upload=document.getElementById("img_upload");
+        var base64_code=document.getElementById("base64_code");
+        var img_area=document.getElementById("img_area");
+        var ppp=document.getElementById("ppp");
+        // 添加功能出发监听事件
+        img_upload.addEventListener('change',readFile,false);}
+        function readFile(){
+            console.log(this.files[0])
+            var file=this.files[0];
+            if(!/image\/\w+/.test(file.type)){
+                alert("请确保文件为图像类型");
+                return false;
+            }
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload=function(){
+                base64_code.innerHTML = this.result; 
+                img_area.innerHTML = '<div>图片img标签展示：</div><img src="'+this.result+'" alt=""/>'; 
+            }
+
+
+            //第二种方法
+            var img = new Image();
+            img.src = URL.createObjectURL(file);
+            img.onload = function(){
+                ppp.appendChild(img);
+                console.log(img)
+                var data = getBase64Image(img);
+                console.log(data);  // 打印出base64编码
+            }
+        }
+        function getBase64Image(img) {
+            var canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, img.width, img.height);
+            ppp.appendChild(canvas)
+            var ext = img.src.substring(img.src.lastIndexOf(".")+1).toLowerCase();
+            var dataURL = canvas.toDataURL("image/"+ext);
+            return dataURL;
+         }
+        </script>
+    </body>
+</html>
